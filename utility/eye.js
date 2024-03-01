@@ -1,6 +1,6 @@
 /* ----------------------------------------- */
 /** @param {NS} ns							 */
-/* Mickeena's scripts: eye.js				 */
+/* Mick's scripts: eye.js					 */
 /* Provides a visual map of all servers with */
 /*  various optional functionality			 */
 /* ----------------------------------------- */
