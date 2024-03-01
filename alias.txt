@@ -1,0 +1,13 @@
+alias Prices=home; cat utility/PrivateServerPrices.txt
+alias FactionTracker=home; utility/factionTracker.js
+alias eye=home; utility/eye.js
+alias hnet=home; utility/hacknet.js --tail
+alias buyPrivate=home; utility/purchasePrivate.js --tail
+alias rebuy=buy BruteSSH.exe; buy FTPCrack.exe; buy relaySMTP.exe; buy HTTPWorm.exe; buy SQLInject.exe; buy ServerProfiler.exe; buy DeepscanV1.exe; buy DeepscanV2.exe; buy AutoLink.exe; buy Formulas.exe; buy -l
+alias temp=run MickHacks/deployDummy.js; run utility/hacknet.js 24 --tail; run utility/purchasePrivate.js 4096 --tail; run utility/purchasePrivate.js 65536 --tail; run MickHacks/smartDeployer.js --tail
+alias list=home; ls; ls MickHacks; ls utility; ls utility/data; ls logs
+alias deploy=home; run MickHacks/smartDeployer.js
+alias kpriv=run utility/KillAllPrivateServers.js
+alias knpriv=run utility/KillAllNonPrivateServers.js
+alias trueKillAll=home; killall; run utility/KillAllPriv.js; run utility/KillAllNonPriv.js
+alias startup=run startup.js --tail
