@@ -8,6 +8,11 @@
 /*  work on 2.5.2	https://bit.ly/3V04Osy	 */
 /* ----------------------------------------- */
 
+// Auto sell infiltration data, set to false if you want rep
+const autoSell = false;
+const autoRep = false;
+const factionForRep = "Daedalus";
+
 const state = {
 	// Name of the company that's infiltrated.
 	company: "",
@@ -29,11 +34,7 @@ const speed = 10;
 // any "ns" functions, it's a pure browser automation tool.
 const wnd = eval("window");
 const doc = wnd["document"];
- 
-// Auto sell infiltration data, set to false if you want rep
-const autoSell = false;
-const autoRep = false;
-const factionForRep = "Daedalus";
+
 // List of all games and an automated solver.
 const infiltrationGames = [
 	{
