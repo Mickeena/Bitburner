@@ -52,79 +52,80 @@ export async function main(ns) {
 	const factionRow = "| %4s | %02d | %-22s | %s",
 		headerRow = "|──────┼────| %-22s | %s";
 
-	const args = ns.flags([
-		["help", false],
-		["noOutput", false],
-		["setNotDone", -1],
-		["clearAll", false]
-	]);
+    const args = ns.flags([
+        ["help", false],
+        ["noOutput", false],
+        ["setNotDone", -1],
+        ["clearAll", false]
+    ]);
 
-	if (args.help) {
-		ns.tprintf("Arguments are completed factions.");
-		ns.tprintf("Flags are [--help], [--noOutput], [--setNotDone numOfFaction], [--clearAll]");
-		return;
-	}
+    if (args.help) {
+        ns.tprint("Arguments are completed factions.");
+        ns.tprint("Flags are [--help], [--noOutput], [--setNotDone numOfFaction], [--clearAll]");
+        return;
+    }
 
-	let tempStatus = [],
-		argLen = ns.args.length,
-		modified = false;
+    let tempStatus = [],
+        argLen = ns.args.length,
+        modified = false;
 
-	if (ns.fileExists(fileLocation, "home")) {
-		var temp = ns.read(fileLocation);
-		tempStatus = temp.split(",");
-	} else {
-		/** @type Array<Number> */
-		tempStatus = new Array(32).fill(0);
-	}
+    if (ns.fileExists(fileLocation, "home")) {
+        var temp = ns.read(fileLocation);
+        tempStatus = temp.split(",");
+    } else {
+        /** @type Array<Number> */
+        tempStatus = new Array(32).fill(0);
+    }
 
-	for (let i = 0; i < argLen; i++) {
-		let tempArg = ns.args[i];
-		if (typeof tempArg == "number" && ns.args[i] > 0 && ns.args[i] < 32) {
-			tempStatus[tempArg - 0] = 1; // <---------------------------------------------------------------------------------------------------------------------------------------
-			modified = true;
-		} else {
-			break;
-		}
-	}
-	if (args.clearAll) {
-		let areYouSure = await ns.prompt("Are you sure you want to reset the faction list?");
-		if (!areYouSure) {
-			return;
-		}
-		for (var i = 0; i < 31; i++) {
-			tempStatus[i] = 0;
-			modified = true;
-		}
-	} else if (args.setNotDone > 0 && args.setNotDone < 32) {
-		tempStatus[args.setNotDone] = 0;
-		modified = true;
-	}
+    for (let i = 0; i < argLen; i++) {
+        let tempArg = ns.args[i];
+        if (typeof tempArg == "number" && ns.args[i] >= 0 && ns.args[i] < 31) {
+            tempStatus[tempArg - 0] = 1;
+            modified = true;
+        } else {
+            break;
+        }
+    }
+    if (args.clearAll) {
+        let areYouSure = await ns.prompt("Are you sure you want to reset the faction list?");
+        if (!areYouSure) {
+            return;
+        }
+        for (var i = 0; i < 31; i++) {
+            tempStatus[i] = 0;
+            modified = true;
+        }
+    } else if (args.setNotDone > 0 && args.setNotDone < 32) {
+        tempStatus[args.setNotDone] = 0;
+        modified = true;
+    }
 
-	if (modified) {
+    if (modified) {
 		await ns.write(fileLocation, tempStatus.join(","), "w");
-	}
+    }
 
-	if (!args.noOutput) {
-		var doneStatus = [];
-		for (var i = 0; i < 31; i++) {
-			if (tempStatus[i] == 1) {
-				doneStatus[i] = "\x1b[38;5;155mDone\x1b[0m";
-			} else {
-				doneStatus[i] = "\x1b[31m No \x1b[0m";
-			}
-		}
+    if (!args.noOutput) {
+        var doneStatus = [];
+        for (var i = 0; i < 31; i++) {
 
-		ns.tprintf("┌──────┬────┬────────────────────────┐");
-		ns.tprintf("| Done | ## | Faction Name:          | Requirements:");
-		let offSet = 0;
-		for (let i = 0; i < factionList.length; i++) {
-			if (factionList[i][1] == "") {
-				ns.tprintf(ns.vsprintf(headerRow, factionList[i]));
-				offSet++;
-			} else {
-				ns.tprintf(ns.vsprintf(factionRow, [doneStatus[i - offSet], i - offSet, factionList[i][0], factionList[i][1]]));
-			}
-		}
-		ns.tprintf("└──────┴────┴────────────────────────┘");
-	}
+            if (tempStatus[i] == 1) {
+                doneStatus[i] = "\x1b[38;5;155mDone\x1b[0m";
+            } else {
+                doneStatus[i] = "\x1b[31m No \x1b[0m";
+            }
+        }
+
+        ns.tprintf("┌──────┬────┬────────────────────────┐");
+        ns.tprintf("| Done | ## | Faction Name:          | Requirements:");
+        let offSet = 0;
+        for (let i = 0; i < factionList.length; i++) {
+            if (factionList[i][1] == "") {
+                ns.tprintf(ns.vsprintf(headerRow, factionList[i]));
+                offSet++;
+            } else {
+                ns.tprintf(ns.vsprintf(factionRow, [doneStatus[i - offSet], i - offSet, factionList[i][0], factionList[i][1]]));
+            }
+        }
+        ns.tprintf("└──────┴────┴────────────────────────┘");
+    }
 }
