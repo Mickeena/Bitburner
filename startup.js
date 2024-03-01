@@ -10,7 +10,7 @@ export async function main(ns) {
 	const deployDummyPid = ns.exec('MickHacks/deployDummy.js', 'home', 1);
 	//await ns.sleep(0);
 	ns.tail(deployDummyPid);
-	ns.moveTail(950,2, deployDummyPid)
+	ns.moveTail(950,76, deployDummyPid)
 	ns.resizeTail(300,500, deployDummyPid)
 
 	// Execute the hacknet.js script with 24 as an argument and tail its output
@@ -24,7 +24,7 @@ export async function main(ns) {
 	let privatePid = ns.exec('utility/purchasePrivate.js', 'home', 1, 1024);
 	//await ns.sleep(0);
 	ns.tail(privatePid);
-	ns.moveTail(950,76, privatePid)
+	ns.moveTail(950,2, privatePid)
 	ns.resizeTail(300,500, privatePid)
 
 	while (true) {
@@ -38,7 +38,7 @@ export async function main(ns) {
 	privatePid = ns.exec('utility/purchasePrivate.js', 'home', 1, 16384);
 	//await ns.sleep(0);
 	ns.tail(privatePid);
-	ns.moveTail(950,76, privatePid)
+	ns.moveTail(950,2, privatePid)
 	ns.resizeTail(300,500, privatePid)
 	while (true) {
 		if (!ns.isRunning(privatePid)) {
@@ -51,7 +51,7 @@ export async function main(ns) {
 	privatePid = ns.exec('utility/purchasePrivate.js', 'home', 1, 1048576);
 	//await ns.sleep(0);
 	ns.tail(privatePid);
-	ns.moveTail(950,76, privatePid)
+	ns.moveTail(950,2, privatePid)
 	ns.resizeTail(300,500, privatePid)
 	while (true) {
 		if (!ns.isRunning(privatePid)) {
