@@ -62,7 +62,7 @@ export async function main(ns) {
 			// ns.tprint("Insufficient funds to purchase additional servers. Exiting loop.");
 			// break;
 		}
-		await ns.sleep(1000);
+		await ns.sleep(100);
 	}
 
 	// Upgrade and deploy loop
