@@ -48,6 +48,8 @@ export async function main(ns) {
 	let i = ns.getPurchasedServers().length + 1;
 
 	while (i <= ns.getPurchasedServerLimit()) {
+		ns.print(`Attempting to buy more servers.`)
+		ns.print(`Current status: Awaiting funds.`)
 		if (ns.getServerMoneyAvailable("home") > ns.getPurchasedServerCost(desiredRam)) {
 			let hostname = ns.purchaseServer("MickServ-" + i, desiredRam);
 			ns.print(`Purchased server: MickServ-${i}, RAM: ${desiredRam}GB`);
@@ -73,7 +75,7 @@ export async function main(ns) {
 			}
 			++i;
 		} else {
-			// ns.tprint("Insufficient funds to purchase additional servers. Exiting loop.");
+						// ns.tprint("Insufficient funds to purchase additional servers. Exiting loop.");
 			// break;
 		}
 		await ns.sleep(100);
@@ -83,6 +85,7 @@ export async function main(ns) {
 	while (true) {
 		const purchasedServers = ns.getPurchasedServers();
 		let upgradePerformed = false;
+		ns.print(`Attempting to upgrade servers.`)
 
 		for (let i = 0; i < purchasedServers.length; i++) {
 			const serverName = purchasedServers[i];
@@ -125,6 +128,7 @@ export async function main(ns) {
 				const serverRam = ns.getServerMaxRam(serverName);
 				if (serverRam < desiredRam) {
 					allServersUpgraded = false;
+					ns.print(`Current status: Awaiting funds.`)
 					break;
 				}
 			}
