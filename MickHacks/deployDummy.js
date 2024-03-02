@@ -10,7 +10,7 @@
 import { scanAll, nukeAll } from "utility/eye.js";
 
 export async function main(ns) {
-	ns.disableLog("All");
+	ns.disableLog("ALL");
 	// Initialise
 	const deployFile = "MickHacks/mhd.js";
 	if (!ns.fileExists(deployFile)) {
