@@ -9,30 +9,38 @@
 /* ----------------------------------------- */
 
 export async function main(ns) {
-	// Define the name of the script to deploy
-	let deployFile = "mhc.js";
+	ns.disableLog("ALL");
 
-	// Define the path to the controlling target file
-	let targetFile = "control/target.txt";
+	const deployMode = 0; // 0 skips deployment of scripts
 
-	// Get the RAM usage of the deploy script
-	if (ns.fileExists(deployFile)) {
-		let deployFileRam = ns.getScriptRam(deployFile);
+	if (deployMode === 1) {
+		// Define the name of the script to deploy
+		let deployFile = "mhc.js";
+
+		// Define the path to the controlling target file
+		let targetFile = "control/target.txt";
+
+		// Get the RAM usage of the deploy script
+		if (ns.fileExists(deployFile)) {
+			let deployFileRam = ns.getScriptRam(deployFile);
+			ns.print(`Deploy File RAM: ${deployFileRam}`);
+		}
 	}
 
 	// Get the desired RAM size from command line arguments
 	if (ns.args.length === 0) {
-		ns.tprintf("Error: No RAM size specified. Please provide the desired RAM size as an argument.");
+		ns.tprintf("\x1b[31mError: No RAM size specified. Please provide the desired RAM size as an argument.");
 		return; // Stop execution if no argument is provided
 	}
 	const desiredRam = parseInt(ns.args[0]);
+	ns.print(`Desired RAM: ${desiredRam}`);
 
 	// Valid RAM sizes
 	const validRamSizes = [2, 4, 8, 16, 32, 64, 128, 256, 512, 1024, 2048, 4096, 8192, 16384, 32768, 65536, 131072, 262144, 524288, 1048576];
 
 	// Check if the provided RAM size is valid
 	if (!validRamSizes.includes(desiredRam)) {
-		ns.tprintf("Error: Invalid RAM size specified. Please provide a valid RAM size from the following list: " + validRamSizes.join(", "));
+		ns.tprintf("\x1b[31mError: Invalid RAM size specified. Please provide a valid RAM size from the following list: " + validRamSizes.join(", "));
 		return; // Stop execution if the RAM size is not valid
 	}
 
@@ -42,20 +50,26 @@ export async function main(ns) {
 	while (i <= ns.getPurchasedServerLimit()) {
 		if (ns.getServerMoneyAvailable("home") > ns.getPurchasedServerCost(desiredRam)) {
 			let hostname = ns.purchaseServer("MickServ-" + i, desiredRam);
-			if (ns.fileExists(deployFile)) {
-				ns.scp(deployFile, hostname);
-				if (ns.fileExists(targetFile)) {
-					ns.scp(targetFile, hostname);
-				}
-				const serverThreads = Math.floor(desiredRam / deployFileRam);
-				if (serverThreads >= 1) {
-					ns.exec(deployFile, hostname, serverThreads.toString());
+			ns.print(`Purchased server: MickServ-${i}, RAM: ${desiredRam}GB`);
+			if (deployMode === 1) {
+				if (ns.fileExists(deployFile)) {
+					ns.scp(deployFile, hostname);
+					if (ns.fileExists(targetFile)) {
+						ns.scp(targetFile, hostname);
+					}
+					const serverThreads = Math.floor(desiredRam / deployFileRam);
+					ns.print(`Server Threads: ${serverThreads}`);
+					if (serverThreads >= 1) {
+						ns.exec(deployFile, hostname, serverThreads.toString());
+					} else {
+						ns.tprint(`\x1b[31mCannot run script on ${hostname} due to insufficient RAM.`);
+					}
+					ns.tprintf("Purchased and executed on: MickServ-" + i);
 				} else {
-					ns.tprint(`Cannot run script on ${hostname} due to insufficient RAM.`);
+					ns.tprintf(`Purchased \x1b[38;5;1mbut failed to execute\x1b[0m on: \x1b[38;5;250mMickServ-${i}, \x1b[38;5;242m${desiredRam}GB.`);
 				}
-				ns.tprintf("Purchased and executed on: MickServ-" + i);
 			} else {
-				ns.tprintf("Purchased \x1b[38;5;1mbut failed to execute\x1b[0m on: MickServ-" + i + " (" + desiredRam + "GB)");
+				ns.tprintf(`\x1b[38;5;250mPurchased new server: MickServ-${i}, \x1b[38;5;242m${desiredRam}GB.`);
 			}
 			++i;
 		} else {
@@ -79,21 +93,24 @@ export async function main(ns) {
 				if (upgradeCost !== -1 && ns.getServerMoneyAvailable("home") > upgradeCost) {
 					// Upgrade server RAM
 					ns.upgradePurchasedServer(serverName, desiredRam);
-					ns.tprint(`Upgraded ${serverName} to ${desiredRam}GB RAM.`);
+					ns.print(`Upgraded server: ${serverName}, RAM: ${desiredRam}GB`);
+					ns.tprint(`\x1b[38;5;250mUpgraded ${serverName} to \x1b[38;5;242m${desiredRam}GB.`);
 					upgradePerformed = true;
-
-					if (ns.fileExists(deployFile)) {
-						ns.scp(deployFile, hostname);
-						if (ns.fileExists(targetFile)) {
-							ns.scp(targetFile, hostname);
-						}
-						const serverThreads = Math.floor(desiredRam / deployFileRam);
-						if (serverThreads >= 1) {
-							// Killing and redeploying the script
-							ns.killall(serverName);
-							ns.exec(deployFile, hostname, serverThreads.toString());
-						} else {
-							ns.tprint(`Cannot run script on ${hostname} due to insufficient RAM.`);
+					if (deployMode === 1) {
+						if (ns.fileExists(deployFile)) {
+							ns.scp(deployFile, hostname);
+							if (ns.fileExists(targetFile)) {
+								ns.scp(targetFile, hostname);
+							}
+							const serverThreads = Math.floor(desiredRam / deployFileRam);
+							ns.print(`Server Threads: ${serverThreads}`);
+							if (serverThreads >= 1) {
+								// Killing and redeploying the script
+								ns.killall(serverName);
+								ns.exec(deployFile, hostname, serverThreads.toString());
+							} else {
+								ns.tprint(`\x1b[31mCannot run script on ${hostname} due to insufficient RAM.`);
+							}
 						}
 					}
 				}
@@ -112,10 +129,10 @@ export async function main(ns) {
 				}
 			}
 			if (allServersUpgraded) {
+				ns.print(`No upgrades performed. All servers upgraded to max.`)
 				break; // Break out of the loop if all servers are already upgraded
 			}
 		}
-
 		await ns.sleep(5000);
 	}
 }
