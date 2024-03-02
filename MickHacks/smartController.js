@@ -16,49 +16,49 @@ export async function main(ns) {
 	const printSetting = ns.args[2]; // Print settings passed via command line
 	const delay = 0;
 	const curServ = ns.getHostname();
+	const maxMoney = ns.getServerMaxMoney(targetServ);
+	const minSecurity = ns.getServerMinSecurityLevel(targetServ);
+	let currTime = curTime();
 	ns.print(`Initialising. Host: ${hostServ}. Target: ${targetServ}.`)
 
 	// Constants for script paths
-	const weakenScript = 'MickHacks/mhs_w.js';
-	const growScript = 'MickHacks/mhs_g.js';
-	const hackScript = 'MickHacks/mhs_h.js';
-	if (!ns.fileExists(weakenScript) || !ns.fileExists(growScript) || !ns.fileExists(hackScript)) {
+	const wScript = 'MickHacks/mhs_w.js';
+	const gScript = 'MickHacks/mhs_g.js';
+	const hScript = 'MickHacks/mhs_h.js';
+	if (!ns.fileExists(wScript) || !ns.fileExists(gScript) || !ns.fileExists(hScript)) {
 		ns.tprintf("\x1b[31mError: One or more deploy files don't exist.\x1b[0m");
 		return;
 	}
 
 	ns.print(`Copying files to target.`)
 	// Copy scripts to the target server
-	ns.scp(weakenScript, hostServ);
-	ns.scp(growScript, hostServ);
-	ns.scp(hackScript, hostServ);
+	ns.scp(wScript, hostServ);
+	ns.scp(gScript, hostServ);
+	ns.scp(hScript, hostServ);
 	ns.print(`Files copied. Starting hack loop.`)
 
 	while (true) {
 		//ns.tprint("Starting loop")
 		const serverRam = ns.getServerMaxRam(hostServ);
-		const maxThreadsW = Math.floor(serverRam / ns.getScriptRam(weakenScript, hostServ)); // Calculate max threads based on server RAM
-		const maxThreadsG = Math.floor(serverRam / ns.getScriptRam(growScript, hostServ)); // Calculate max threads based on server RAM
-		const maxThreadsH = Math.floor(serverRam / ns.getScriptRam(hackScript, hostServ)); // Calculate max threads based on server RAM
+		const maxThreadsW = Math.floor(serverRam / ns.getScriptRam(wScript, hostServ)); // Calculate max threads based on server RAM
+		const maxThreadsG = Math.floor(serverRam / ns.getScriptRam(gScript, hostServ)); // Calculate max threads based on server RAM
+		const maxThreadsH = Math.floor(serverRam / ns.getScriptRam(hScript, hostServ)); // Calculate max threads based on server RAM
 
 		const currentSecurity = ns.getServerSecurityLevel(targetServ);
-		const minSecurity = ns.getServerMinSecurityLevel(targetServ);
 		const currentMoney = ns.getServerMoneyAvailable(targetServ);
-		const maxMoney = ns.getServerMaxMoney(targetServ);
-		ns.print(`Status:`)
-		ns.print(`Security: ${currentSecurity}/${minSecurity}`)
-		ns.print(`Money: ${currentMoney}/${maxMoney}`)
+		ns.print(`Current status:`)
+		ns.print(`Target security: \x1b[38;5;178m${currentSecurity}\x1b[0m/\x1b[38;5;155m${minSecurity}\x1b[0m`)
+		ns.print(`Target money: \x1b[38;5;178m${currentMoney}\x1b[0m/\x1b[38;5;155m${maxMoney}\x1b[0m`)
 
-		let currTime = curTime();
 		if (currentSecurity > minSecurity) {
 			// Start weakening script if current security is higher than min security
-			ns.exec(weakenScript, hostServ, maxThreadsW, targetServ, maxThreadsW, printSetting, curServ, delay);
-			ns.print(`Weaken script executed.`);
-			currTime = curTime();
-			const weakenTime = formatValueTime(ns.getWeakenTime(targetServ) / 1000)
-			ns.print(`${currTime} ETA: ${weakenTime}`)
+			ns.exec(wScript, hostServ, maxThreadsW, targetServ, maxThreadsW, printSetting, curServ, delay);
+			ns.print(`Weaken script executed on \x1b[38;5;242m${hostServ}\x1b[0m -> \x1b[38;5;242m${targetServ}\x1b[0m.`);
+				currTime = curTime();
+				const wTime = formatValueTime(ns.getWeakenTime(targetServ) / 1000)
+				ns.print(`${currTime} ETA: \x1b[38;5;250m${wTime}`)
 			while (true) {
-				if (ns.isRunning(weakenScript, hostServ, targetServ, maxThreadsW, printSetting, curServ, delay)) {
+				if (ns.isRunning(wScript, hostServ, targetServ, maxThreadsW, printSetting, curServ, delay)) {
 					await ns.sleep(1000)
 				} else {
 					ns.print(`Weaken script completed.`);
@@ -67,13 +67,13 @@ export async function main(ns) {
 			}
 		} else if (currentMoney < maxMoney) {
 			// Start growing script if current money is lower than max money
-			ns.exec(growScript, hostServ, maxThreadsG, targetServ, maxThreadsG, printSetting, curServ, delay);
-			ns.print(`Grow script executed.`);
-			currTime = curTime();
-			const growTime = formatValueTime(ns.getGrowTime(targetServ) / 1000)
-			ns.print(`${currTime} ETA: ${growTime}`)
+			ns.exec(gScript, hostServ, maxThreadsG, targetServ, maxThreadsG, printSetting, curServ, delay);
+			ns.print(`Grow script executed on \x1b[38;5;242m${hostServ}\x1b[0m -> \x1b[38;5;242m${targetServ}\x1b[0m.`);
+				currTime = curTime();
+				const gTime = formatValueTime(ns.getGrowTime(targetServ) / 1000)
+				ns.print(`${currTime} ETA: \x1b[38;5;250m${gTime}`)
 			while (true) {
-				if (ns.isRunning(growScript, hostServ, targetServ, maxThreadsG, printSetting, curServ, delay)) {
+				if (ns.isRunning(gScript, hostServ, targetServ, maxThreadsG, printSetting, curServ, delay)) {
 					await ns.sleep(1000)
 				} else {
 					ns.print(`Grow script completed.`);
@@ -82,13 +82,13 @@ export async function main(ns) {
 			}
 		} else {
 			// Start hacking script if none of the above conditions are met
-			ns.exec(hackScript, hostServ, maxThreadsH, targetServ, maxThreadsH, printSetting, curServ, delay);
-			ns.print(`Hack script executed.`);
-			currTime = curTime();
-			const hackTime = formatValueTime(ns.getHackTime(targetServ) / 1000)
-			ns.print(`${currTime} ETA: ${hackTime}`)
+			ns.exec(hScript, hostServ, maxThreadsH, targetServ, maxThreadsH, printSetting, curServ, delay);
+			ns.print(`Hack script executed on \x1b[38;5;242m${hostServ}\x1b[0m -> \x1b[38;5;242m${targetServ}\x1b[0m.`);
+				currTime = curTime();
+				const hTime = formatValueTime(ns.getHackTime(targetServ) / 1000)
+				ns.print(`${currTime} ETA: \x1b[38;5;250m${hTime}`)
 			while (true) {
-				if (ns.isRunning(hackScript, hostServ, targetServ, maxThreadsH, printSetting, curServ, delay)) {
+				if (ns.isRunning(hScript, hostServ, targetServ, maxThreadsH, printSetting, curServ, delay)) {
 					await ns.sleep(1000)
 				} else {
 					ns.print(`Hack script completed.`);
@@ -96,7 +96,7 @@ export async function main(ns) {
 				}
 			}
 		}
-		//ns.tprint("Outer loop complete.")
+		//ns.print("Outer loop complete. Waiting 10 seconds to continue.")
 		//await ns.sleep(10000)
 	}
 }
