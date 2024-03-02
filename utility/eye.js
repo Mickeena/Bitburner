@@ -42,8 +42,11 @@ export function scanAll(ns, server) {
 /* Breach all possible servers and nuke them for root access					*/
 /* ---------------------------------------------------------------------------- */
 export function nukeAll(ns, server = "home") {
+	ns.disableLog("ALL");
 	// Count breachable ports
 	let portsAvailable = ns.fileExists("BruteSSH.exe", "home") + ns.fileExists("FTPCrack.exe", "home") + ns.fileExists("RelaySMTP.exe", "home") + ns.fileExists("HTTPWorm.exe", "home") + ns.fileExists("SQLInject.exe", "home");
+	ns.print(`Breachable ports: ${portsAvailable}`)
+	ns.print(`Importing server list.`)
 
 	// Add all servers to a single list
 	let serverList = scanAll(ns, server);
@@ -52,6 +55,7 @@ export function nukeAll(ns, server = "home") {
 	let nukeCountOld = 0
 	let nukeCountSkipped = 0
 
+	ns.print(`Initiating nuke.`)
 	// Nuke all possible servers
 	serverList.forEach(serverName => {
 		// If enough breaches available
@@ -65,15 +69,18 @@ export function nukeAll(ns, server = "home") {
 				if (ns.fileExists("SQLInject.exe", "home")) { ns.sqlinject(serverName); }
 
 				ns.nuke(serverName);
+				ns.print(`Server: ${serverName}. Status: nuked.`)
 				// ns.tprintf("Nuked " + serverName + " successfully");
 				nukeCountNew = nukeCountNew + 1
 			} else {
 				//ns.print("Previously rooted, skipping: " + serverName);
+				ns.print(`Server: ${serverName}. Status: previously rooted.`)
 				nukeCountOld = nukeCountOld + 1
 			}
 		}
 		else {
 			//	ns.tprintf("Not enough breachable ports for " + serverName + ", skipping");
+			ns.print(`Server: ${serverName}. Status: too secure.`)
 			nukeCountSkipped = nukeCountSkipped + 1
 		}
 	});
@@ -93,6 +100,7 @@ export function nukeAll(ns, server = "home") {
 /* Mode "backdoorlow":	Calculate and print the backdoor path lowest target		*/
 /* ---------------------------------------------------------------------------- */
 export function mapAll(ns, mode = "view", targetServer = null) {
+	ns.disableLog("ALL");
 	let serverList = [];
 	let maxDepth = 0;
 	let maxNameLength = 0;
@@ -122,10 +130,11 @@ export function mapAll(ns, mode = "view", targetServer = null) {
 	} else if (mode === "low") {
 		mode = "backdoorLow";
 	}
-
 	if (mode === "nuke" || mode === "n") {
+		ns.print(`Mode: nuke.`)
 		nukeAll(ns)
 	} else {
+		ns.print(`Mode: ${mode}. Initiating full scan.`)
 
 		// Function to recursively scan servers
 		function scanServer(server, parent, depth, isLast) {
@@ -155,9 +164,11 @@ export function mapAll(ns, mode = "view", targetServer = null) {
 
 		// Start scanning from the "home" server
 		scanServer("home", null, 0, true);
+		ns.print(`Servers scanned.`)
 
 		// Execute path-specific logic
 		if (mode === "path") {
+			ns.print(`Path mode: finding path to server.`)
 			if (targetServer) {
 				// Find the server object in the serverList array
 				let server = serverList.find(s => s.name === targetServer);
@@ -184,6 +195,7 @@ export function mapAll(ns, mode = "view", targetServer = null) {
 							break;
 						}
 					}
+					ns.print(`Path found, preparing to print.`)
 
 					// Add "connect" before the final server in the path
 					path = path.replace(/;([^;]*)$/, "; connect$1");
@@ -191,16 +203,20 @@ export function mapAll(ns, mode = "view", targetServer = null) {
 					// Print the path
 					ns.tprintf("\x1b[38;5;242mPath to " + targetServer + ": \x1b[0m");
 					ns.tprintf("\x1b[38;5;250m" + path + "\x1b[0m");
+					ns.print(`Path printed. Finished.`)
 				} else {
 					ns.tprintf("Target server not found in the server list.");
+					ns.print("Target server not found in the server list.");
 				}
 			} else {
 				ns.tprintf("No target server selected.");
+				ns.print("No target server selected.");
 			}
 		}
 
 		// Display the server map in the terminal with visual links and additional information
 		if (mode === "view") {
+			ns.print(`View mode: preparing list for print.`)
 			// Calculate the total padding needed
 			let totalPadding = maxDepth * 2 + maxNameLength;
 			serverList.forEach(server => {
@@ -234,10 +250,12 @@ export function mapAll(ns, mode = "view", targetServer = null) {
 					ns.tprintf(`${prefix}[${server.depth}] ${server.name}${padding}${depthPadding}(${portsRequired}) ports - ${rootStatus} - lvl ${levelColor}(${requiredLevel})\x1b[0m${levelPadding} - ${maxRam}`);
 				}
 			});
+			ns.print(`Finished printing.`)
 		}
 
 		// Execute backdoor-specific logic
 		if (mode === "backdoor") {
+			ns.print(`Backdoor mode: preparing list.`)
 			serverList.forEach(server => {
 				if (server.name !== "home" && !server.name.startsWith("MickServ")) {
 					let requiredLevel = ns.getServerRequiredHackingLevel(server.name);
@@ -267,6 +285,7 @@ export function mapAll(ns, mode = "view", targetServer = null) {
 							}
 						}
 
+						ns.print(`Suitable server found, printing path to: ${server}`)
 						// Add the current server to the path
 						path += "connect " + server.name;
 
@@ -283,6 +302,7 @@ export function mapAll(ns, mode = "view", targetServer = null) {
 
 		// Execute backdoorlow-specific logic
 		if (mode === "backdoorLow") {
+			ns.print(`Backdoor(lowest) mode: preparing full list.`)
 			let lowestServer = null;
 			let lowestServerLevel = Infinity;
 
@@ -294,16 +314,16 @@ export function mapAll(ns, mode = "view", targetServer = null) {
 					!ns.getServer(server.name).backdoorInstalled &&
 					ns.getServerRequiredHackingLevel(server.name) < playerLevel;
 			});
-
+			ns.print(`Backdoor list prepared, finding best target.`)
 			// Prioritize specific servers if they're lower level than your current level
 			["CSEC", "I.I.I.I", "run4theh111z", "avmnite-02h", "fulcrumassets"].forEach(targetServer => {
 				let server = relevantServers.find(s => s.name === targetServer);
 				if (server && ns.getServerRequiredHackingLevel(server.name) < lowestServerLevel) {
 					lowestServer = server;
 					lowestServerLevel = ns.getServerRequiredHackingLevel(server.name);
+					ns.print(`Override target found: ${lowestServer} at level ${lowestServerLevel}.`)
 				}
 			});
-
 			// If no specific servers are found or they are not lower level than your current level, find the lowest level server
 			if (!lowestServer) {
 				relevantServers.forEach(server => {
@@ -312,10 +332,11 @@ export function mapAll(ns, mode = "view", targetServer = null) {
 						lowestServerLevel = ns.getServerRequiredHackingLevel(server.name);
 					}
 				});
+				ns.print(`Target found: ${lowestServer} at level ${lowestServerLevel}.`)
 			}
-
 			// Construct the path to the selected server
 			if (lowestServer) {
+				ns.print(`Finding path to server.`)
 				let path = "";
 				let parent = lowestServer.parent;
 
@@ -333,6 +354,7 @@ export function mapAll(ns, mode = "view", targetServer = null) {
 						break;
 					}
 				}
+				ns.print(`Formatting path.`)
 
 				// Add the selected server to the path
 				path += "connect " + lowestServer.name;
@@ -343,20 +365,24 @@ export function mapAll(ns, mode = "view", targetServer = null) {
 				// Print the path
 				ns.tprintf("\x1b[38;5;242mPath to backdoor " + lowestServer.name + " [" + lowestServerLevel + "]: \x1b[0m");
 				ns.tprintf("\x1b[38;5;250m" + path + "\x1b[0m");
+				ns.print(`Path completed`)
 			} else {
 				// If no suitable server is found, print a message
 				ns.tprintf("No suitable server found for backdoor.");
+				ns.print("No suitable server found for backdoor.");
 			}
 		}
 
 
 		// Execute cash-specific logic
 		if (mode === "cash" || mode === "cashHide") {
+			ns.print(`Cash mode: filtering out 0 cash targets.`)
 			// Filter out servers with 0 cash
 			serverList = serverList.filter(server => ns.getServerMaxMoney(server.name) > 0);
 
 			// Apply cashHide mode if specified
 			if (mode === "cashHide") {
+				ns.print(`Cash(hide) mode: filtering out high-level targets.`)
 				serverList = serverList.filter(server => ns.getServerRequiredHackingLevel(server.name) <= playerLevel);
 			}
 
@@ -379,6 +405,7 @@ export function mapAll(ns, mode = "view", targetServer = null) {
 			let totalPadding = maxDepth * 2 + maxNameLength;
 
 			serverList.forEach(server => {
+				ns.print(`Preparing server: ${server}`)
 				let cash = formatValueSec(ns.getServerMoneyAvailable(server.name));
 				let maxCash = formatValueSec(ns.getServerMaxMoney(server.name));
 				let currSecurity = formatValueSec(ns.getServerSecurityLevel(server.name), true);
@@ -402,6 +429,7 @@ export function mapAll(ns, mode = "view", targetServer = null) {
 
 				ns.tprintf(`${prefix}[${server.depth}] ${server.name}${padding}${depthPadding}Cash: ${cashColor}${cash}${cashPadding}\x1b[0m / ${maxCash}${maxCashPadding} - Security: ${securityColor}${currSecurity}${currSecurityPadding}\x1b[0m / ${minSecurity}${minSecurityPadding} - Hack Level: ${levelColor}${requiredLevel}${hackLevelPadding}`);
 			});
+			ns.print(`Finished printing.`)
 		}
 
 		// Get the color code based on the value, maxValue, and type
@@ -433,10 +461,7 @@ export function mapAll(ns, mode = "view", targetServer = null) {
 					colorCode = "\x1b[38;5;178m"; // Between 50% and player level color code
 				}
 			}
-
 			return colorCode;
 		}
-
-		
 	}
 }
