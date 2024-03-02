@@ -5,6 +5,8 @@
 /*  file									 */
 /* ----------------------------------------- */
 
+//import { clearLogFile, writeToLogFile } from 'logs/logger.js';
+
 export async function clearLogFile(ns, logFilePath) {
 	await ns.rm(logFilePath);
 }
