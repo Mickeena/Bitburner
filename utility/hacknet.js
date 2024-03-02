@@ -7,9 +7,12 @@
 /* ----------------------------------------- */
 
 export async function main(ns) {
+	ns.disableLog("ALL");
+
     // Parse command line arguments for maxNodes, default to 12 if not provided or invalid
     let args = ns.args;
     let maxNodes = args && args[0] ? args[0] : 12;
+	ns.print(`Max nodes input: ${maxNodes}`)
 
     // Validate maxNodes argument
     if (isNaN(maxNodes) || maxNodes <= 0) {
@@ -19,6 +22,7 @@ export async function main(ns) {
 
     // Get the current number of nodes
     let currNodes = ns.hacknet.numNodes();
+	ns.print(`Current nodes: ${currNodes}`)
 
     // Continuously optimize the Hacknet nodes
     while (true) {
@@ -53,20 +57,26 @@ export async function main(ns) {
                 cheapType = "Core";
                 cheapNode = i;
             }
+			ns.print(`Checking node: ${i}. Level: ${costLevel}. Ram: ${costRam}. Core: ${costCore}.`)
+			ns.print(`Current cheapest: Node ${cheapNode}, type: ${cheapType}, cost: ${cheapest}`)
         }
 
         // If there are less nodes than maxNodes, check if purchasing a new node is cheaper
         if (currNodes < maxNodes) {
             let costNode = ns.hacknet.getPurchaseNodeCost();
+			ns.print(`New node cost: ${costNode}`)
             if (costNode < cheapest) {
                 cheapest = costNode;
                 cheapType = "Node";
             }
-        }
+        } else {
+				ns.print(`Max nodes achieved, skipping new node cost.`)
+		}
 
         // If no upgrades are possible, exit the script
         if (cheapest === Infinity) {
-            ns.tprint("All nodes maxed. Exiting hacknet script.");
+            ns.tprint("\x1b[38;5;155mAll nodes maxed. Exiting hacknet script.");
+            ns.print("All nodes maxed. Exiting hacknet script.");
             return;
         } else {
             // Format cheapest cost
@@ -87,7 +97,7 @@ export async function main(ns) {
                         await ns.hacknet.purchaseNode();
                         currNodes++;
                     } else {
-                        ns.tprint("Error, no cheaptype compatible. Cheaptype known: " + cheapType);
+                        ns.tprint("\x1b[31mError, no cheaptype compatible. Cheaptype known: " + cheapType);
                         return;
                     }
                     break;
