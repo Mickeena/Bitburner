@@ -4,7 +4,7 @@
 /* Formats numbers into k/m/b/t or min/sec	 */
 /* ----------------------------------------- */
 
-// import { formatValue, formatValueTime, curTime, formatValueSec } from 'formatValues';
+// import { formatValue, formatValueTime, curTime, formatValueSec } from 'utility/formatValues.js';
 
 export function formatValue(value) {
 	// Format value to use k, m, b, or t for thousand/million/billion/trillion
