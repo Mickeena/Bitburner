@@ -4,6 +4,8 @@
 /* Formats numbers into k/m/b/t or min/sec	 */
 /* ----------------------------------------- */
 
+// import { formatValue, formatValueTime, curTime, formatValueSec } from 'formatValues';
+
 export function formatValue(value) {
 	// Format value to use k, m, b, or t for thousand/million/billion/trillion
 	let newValue = value;
@@ -51,6 +53,10 @@ export function formatValueTime(value) {
     }
 
     return formattedTime.trim();
+}
+
+export function curTime() {
+    return new Date().toLocaleTimeString('en-GB', { hour12: false });
 }
 
 export function formatValueSec(value, isSecurity = false) {
