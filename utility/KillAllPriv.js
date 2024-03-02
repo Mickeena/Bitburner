@@ -6,12 +6,16 @@
 /* ----------------------------------------- */
 
 export async function main(ns) {
-	// Get the list of purchased servers
-    const serversToKill = await ns.getPurchasedServers();
+	ns.disableLog("ALL");
+	ns.print(`Listing all purchased servers`)
 
-    // Iterate through the filtered servers and kill all scripts
-    for (const server of serversToKill) {
-        ns.killall(server);
-        ns.tprint(`Killed all scripts on server: ${server}`);
-    }
+	// Get the list of purchased servers
+	const serversToKill = await ns.getPurchasedServers();
+
+	// Iterate through the filtered servers and kill all scripts
+	ns.print(`List filtered. Killing scripts.`)
+	for (const server of serversToKill) {
+		ns.killall(server);
+		ns.print(`Killed all scripts on server: ${server}`);
+	}
 }
