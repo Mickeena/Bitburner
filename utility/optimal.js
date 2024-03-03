@@ -11,31 +11,37 @@ import { clearLogFile, writeToLogFile } from 'logs/logger.js';
 // import { getCPS, sortCPS, printCPS } from "utility/optimal.js"
 
 export async function main(ns) {
-	// Get the sorted list of servers
-	const results = await sortCPS(ns);
+	const mode = ns.args[0]
+	if (mode === "print" || mode === "p") {
+		await printCPS(ns)
+		ns.tprintf(`\x1b[38;5;250mPrinted list to file.`)
+	} else {
+		// Get the sorted list of servers
+		const results = await sortCPS(ns);
 
-	// Print results into the terminal
-	ns.tprintf("Servers ordered by money per second:");
-	for (const result of results) {
-		ns.tprintf(`Server: \x1b[38;5;250m${result.server}\x1b[0m, Money per Cycle: ${result.moneyPerCyclef}, Money per Second: \x1b[38;5;155m${result.moneyPerSecondf}\x1b[0m, Cycle length: ${result.cycleTimef}`);
+		// Print results into the terminal
+		ns.tprintf("Servers ordered by money per second:");
+		for (const result of results) {
+			ns.tprintf(`Server: \x1b[38;5;250m${result.server}\x1b[0m, Money per Cycle: ${result.moneyPerCyclef}, Money per Second: \x1b[38;5;155m${result.moneyPerSecondf}\x1b[0m, Cycle length: ${result.cycleTimef}`);
+		}
 	}
 }
 
 export async function printCPS(ns) {
-    const results = await sortCPS(ns);
-    const printFile = "utility/cps.txt";
+	const results = await sortCPS(ns);
+	const printFile = "utility/data/cps.txt";
 
-    // Delete the existing file if it exists
-    if (ns.fileExists(printFile)) {
-        ns.rm(printFile);
-        ns.print(`Deleted existing file: ${printFile}`);
-    }
+	// Delete the existing file if it exists
+	if (ns.fileExists(printFile)) {
+		ns.rm(printFile);
+		ns.print(`Deleted existing file: ${printFile}`);
+	}
 
-    // Create a new file and print server names
-    const serverNames = results.map(item => item.server).join('\n');
-    ns.write(printFile, serverNames);
+	// Create a new file and print server names
+	const serverNames = results.map(item => item.server).join('\n');
+	ns.write(printFile, serverNames);
 
-    ns.print(`Server names printed to file: ${printFile}`);
+	ns.print(`Server names printed to file: ${printFile}`);
 }
 
 export async function sortCPS(ns) {
@@ -53,7 +59,7 @@ export async function getCPS(ns) {
 	const logFile = "logs/optimal.txt"
 	const logDelay = 0
 	clearLogFile(ns, logFile)
-	
+
 	// Initialise settings
 	const serverList = scanAll(ns)
 	const player = ns.getPlayer()
