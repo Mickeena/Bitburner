@@ -48,7 +48,7 @@ export async function sortCPS(ns) {
 export async function getCPS(ns) {
 	ns.disableLog("ALL");
 
-	ns.print(`Initialising.`)
+	ns.print(`Initialising CPS calculations.`)
 
 	const logFile = "logs/optimal.txt"
 	const logDelay = 0
