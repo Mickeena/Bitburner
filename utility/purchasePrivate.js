@@ -78,7 +78,7 @@ export async function main(ns) {
 			}
 			++i;
 		} else {
-						// ns.tprint("Insufficient funds to purchase additional servers. Exiting loop.");
+			// ns.tprint("Insufficient funds to purchase additional servers. Exiting loop.");
 			// break;
 		}
 		await ns.sleep(100);
@@ -131,7 +131,8 @@ export async function main(ns) {
 				const serverRam = ns.getServerMaxRam(serverName);
 				if (serverRam < desiredRam) {
 					allServersUpgraded = false;
-					ns.print(`Current status: Awaiting funds.`)
+					const reqFund = formatValue(ns.getPurchasedServerCost(desiredRam));
+					ns.print(`Current status: Awaiting funds: ${reqFund}`)
 					break;
 				}
 			}
