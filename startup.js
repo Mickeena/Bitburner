@@ -6,6 +6,9 @@
 /* ----------------------------------------- */
 
 export async function main(ns) {
+
+	ns.killall()
+
 	// Execute the deployDummy.js script and tail its output
 	const deployDummyPid = ns.exec('MickHacks/deployDummy.js', 'home', 1);
 
