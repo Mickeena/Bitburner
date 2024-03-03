@@ -8,6 +8,8 @@
 /* Usage: run purchasePrivate.js [ram]		 */
 /* ----------------------------------------- */
 
+import { formatValue } from "utility/formatValues.js"
+
 export async function main(ns) {
 	ns.disableLog("ALL");
 
@@ -49,7 +51,8 @@ export async function main(ns) {
 
 	while (i <= ns.getPurchasedServerLimit()) {
 		ns.print(`Attempting to buy more servers.`)
-		ns.print(`Current status: Awaiting funds.`)
+		const reqFund = formatValue(ns.getPurchasedServerCost(desiredRam));
+		ns.print(`Current status: Awaiting funds: ${reqFund}`)
 		if (ns.getServerMoneyAvailable("home") > ns.getPurchasedServerCost(desiredRam)) {
 			let hostname = ns.purchaseServer("MickServ-" + i, desiredRam);
 			ns.print(`Purchased server: MickServ-${i}, RAM: ${desiredRam}GB`);
