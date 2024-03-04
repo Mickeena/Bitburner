@@ -5,8 +5,8 @@
 /*  private server, based on optimal targets */
 /* ----------------------------------------- */
 
-import { printCPS } from "utility/optimal.js"
-import { clearLogFile, writeToLogFile } from "logs/logger.js";
+import { printCPS } from `utility/optimal.js`;
+import { clearLogFile, writeToLogFile } from `logs/logger.js`;
 
 export async function main(ns) {
 	ns.disableLog("ALL");
