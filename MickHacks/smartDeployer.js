@@ -162,6 +162,7 @@ async function deployController(ns, hostServ, targetServ, printSetting, tailMode
 	// Log the successful deployment
 	ns.print(`Deployed onto ${hostServ}, target: ${targetServ}`);
 	writeToLogFile(ns, logDelay, logFile, `Deployed onto ${hostServ}, target: ${targetServ}`);
+	ns.tprintf(`\x1b[38;5;242mDeployed controller for \x1b[38;5;250m${hostServ}\x1b[38;5;242m, target: \x1b[38;5;250m${targetServ}\x1b[0m`);
 }
 
 // Check if a server with the specified name exists among the purchased servers
