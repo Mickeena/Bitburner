@@ -47,8 +47,9 @@ export async function main(ns) {
 		}
 	}
 
-	ns.killall()
-	
+	await ns.killall()
+	await ns.rm("utility/data/deployQuant.txt")
+	await ns.rm("utility/data/deployPIDs.txt")
 
 	// Deploy dummy hacking script to a;ll public servers
 	const deployDummyPid = ns.exec('MickHacks/deployDummy.js', 'home', 1);
