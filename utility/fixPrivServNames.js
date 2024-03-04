@@ -5,7 +5,14 @@
 /* intended naming convention (or requested) */
 /* ----------------------------------------- */
 
+// import { fixPrivServNames } from "utility/fixPrivServNames.js"
+
+// Main function for running the script directly
 export async function main(ns) {
+    await fixPrivServNames(ns);
+}
+
+export async function fixPrivServNames(ns) {
     // Check for excess args
     if (ns.args.length !== 0 && ns.args.length !== 1) {
         ns.tprintf("\x1b[31mUsage: run utility/fixPrivServNames.js <serverName>");
