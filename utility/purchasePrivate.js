@@ -9,9 +9,12 @@
 /* ----------------------------------------- */
 
 import { formatValue } from "utility/formatValues.js"
+import { fixPrivServNames } from "utility/fixPrivServNames.js"
 
 export async function main(ns) {
 	ns.disableLog("ALL");
+
+	await fixPrivServNames(ns);
 
 	const deployMode = 0; // 0 skips deployment of scripts
 
