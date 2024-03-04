@@ -81,13 +81,21 @@ export async function main(ns) {
 		await ns.rm(cpsOld)
 		// Save cpsNew as cpsOld
 		await ns.write(cpsOld, cpsNewContent);
+		ns.print(`CPS file replaced. Obtaining list of running Pids to kill`)
+		await writeToLogFile(ns, logDelay, logFile, `CPS file replaced.`)
+
 
 		const pidList = ns.read(pidFile).split("\n").filter(pid => pid.trim() !== "" && !isNaN(parseInt(pid))).map(pid => parseInt(pid)); // Parse process IDs as integers
 		await writeToLogFile(ns, logDelay, logFile, `Pid list obtained: ${pidList}`);
 		for (const pid of pidList) {
-			await ns.kill(pid);
-			ns.print(`Killed process: ${pid}`);
-			await writeToLogFile(ns, logDelay, logFile, `Killed process: ${pid}`);
+			const processExists = await ns.ps(pid);
+			if (processExists) {
+				await ns.kill(pid);
+				ns.print(`Killed process: ${pid}`);
+				await writeToLogFile(ns, logDelay, logFile, `Killed process: ${pid}`);
+			} else {
+				ns.print(`Process with PID ${pid} does not exist.`);
+			}
 		}
 
 		ns.print(`All pids killed. Removing file.`);
@@ -154,7 +162,6 @@ async function deployController(ns, hostServ, targetServ, printSetting, tailMode
 	// Log the successful deployment
 	ns.print(`Deployed onto ${hostServ}, target: ${targetServ}`);
 	writeToLogFile(ns, logDelay, logFile, `Deployed onto ${hostServ}, target: ${targetServ}`);
-	ns.tprintf(`\x1b[38;5;242mDeployed controller for \x1b[38;5;250m${hostServ}\x1b[38;5;242m, target: \x1b[38;5;250m${targetServ}\x1b[0m`);
 }
 
 // Check if a server with the specified name exists among the purchased servers
