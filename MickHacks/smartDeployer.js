@@ -152,7 +152,6 @@ async function deployController(ns, hostServ, targetServ, printSetting, tailMode
 	}
 
 	// Log the successful deployment
-	ns.tprintf(`\x1b[38;5;250mPurchased new server: MickServ-${i}, \x1b[38;5;242m${desiredRam}GB.`);
 	ns.print(`Deployed onto ${hostServ}, target: ${targetServ}`);
 	writeToLogFile(ns, logDelay, logFile, `Deployed onto ${hostServ}, target: ${targetServ}`);
 	ns.tprintf(`\x1b[38;5;242mDeployed controller for \x1b[38;5;250m${hostServ}\x1b[38;5;242m, target: \x1b[38;5;250m${targetServ}\x1b[0m`);
