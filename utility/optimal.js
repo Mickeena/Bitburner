@@ -8,7 +8,7 @@
 import { scanAll } from "utility/eye.js";
 import { formatValue, formatValueTime } from "utility/formatValues.js"
 import { clearLogFile, writeToLogFile } from 'logs/logger.js';
-// import { getCPS, sortCPS, printCPS } from `utility/optimal.js`;
+// import { getCPS, sortCPS, printCPS } from "utility/optimal.js"
 
 export async function main(ns) {
 	const mode = ns.args[0]
@@ -63,7 +63,7 @@ export async function getCPS(ns) {
 	// Initialise settings
 	const serverList = scanAll(ns)
 	const player = ns.getPlayer()
-	const currentHackLevel = ns.currentHackLevel
+	const currentHackLevel = ns.getHackingLevel()
 	const privateRam = ns.getServerMaxRam("MickServ-1");
 
 	const wScript = 'MickHacks/mhs_w.js';
