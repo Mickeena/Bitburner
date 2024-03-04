@@ -64,7 +64,8 @@ export async function getCPS(ns) {
 	const serverList = scanAll(ns)
 	const player = ns.getPlayer()
 	const currentHackLevel = ns.getHackingLevel()
-	const privateRam = ns.getServerMaxRam("MickServ-1");
+	const privateRam = ns.serverExists("MickServ-1") ? ns.getServerMaxRam("MickServ-1") : 1024;
+	//	const privateRam = ns.getServerMaxRam("MickServ-1");
 
 	const wScript = 'MickHacks/mhs_w.js';
 	const gScript = 'MickHacks/mhs_g.js';
