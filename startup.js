@@ -58,19 +58,19 @@ export async function main(ns) {
 	const hacknetPid = ns.exec('utility/hacknet.js', 'home', 1, 24);
 	ns.tail(hacknetPid);
 	ns.moveTail(950, 73, hacknetPid)
-	ns.resizeTail(300, 500, hacknetPid)
+	ns.resizeTail(392, 500, hacknetPid)
 
 	// Execute the main deployment script for private server usage
 	const deployerPid = ns.exec('MickHacks/smartDeployer.js', 'home', 1);
 	ns.tail(deployerPid);
 	ns.moveTail(950, 37, deployerPid)
-	ns.resizeTail(300, 500, deployerPid)
+	ns.resizeTail(392, 500, deployerPid)
 
 	// Purchase private servers of increasing size
 	let privatePid = ns.exec('utility/purchasePrivate.js', 'home', 1, 1024);
 	ns.tail(privatePid);
 	ns.moveTail(950, 1, privatePid)
-	ns.resizeTail(300, 500, privatePid)
+	ns.resizeTail(392, 500, privatePid)
 
 	while (true) {
 		if (!ns.isRunning(hacknetPid)) {
@@ -86,7 +86,7 @@ export async function main(ns) {
 	privatePid = ns.exec('utility/purchasePrivate.js', 'home', 1, 16384);
 	ns.tail(privatePid);
 	ns.moveTail(950, 1, privatePid)
-	ns.resizeTail(300, 500, privatePid)
+	ns.resizeTail(392, 500, privatePid)
 	while (true) {
 		if (!ns.isRunning(hacknetPid)) {
 			ns.closeTail(hacknetPid)
@@ -101,7 +101,7 @@ export async function main(ns) {
 	privatePid = ns.exec('utility/purchasePrivate.js', 'home', 1, 1048576);
 	ns.tail(privatePid);
 	ns.moveTail(950, 1, privatePid)
-	ns.resizeTail(300, 500, privatePid)
+	ns.resizeTail(392, 500, privatePid)
 	while (true) {
 		if (!ns.isRunning(hacknetPid)) {
 			ns.closeTail(hacknetPid)
