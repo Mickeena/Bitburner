@@ -1,6 +1,6 @@
 /* ----------------------------------------- */
 /** @param {NS} ns							 */
-/* Mick's scripts: redeploy.js				 */
+/* Mick's scripts: startup.js				 */
 /* Runs starting scripts after each 		 */
 /*  augment installation					 */
 /* ----------------------------------------- */
@@ -8,6 +8,8 @@
 export async function main(ns) {
 
 	ns.killall()
+	await ns.rm("utility/data/deployQuant.txt")
+	await ns.rm("utility/data/deployPIDs.txt")
 	ns.exec(`KillAllNonPriv.js`, `home`, 1);
 	ns.exec(`KillAllPriv.js`, `home`, 1);
 	await ns.sleep(500)
