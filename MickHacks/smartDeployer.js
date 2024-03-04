@@ -81,13 +81,21 @@ export async function main(ns) {
 		await ns.rm(cpsOld)
 		// Save cpsNew as cpsOld
 		await ns.write(cpsOld, cpsNewContent);
+		ns.print(`CPS file replaced. Obtaining list of running Pids to kill`)
+		await writeToLogFile(ns, logDelay, logFile, `CPS file replaced.`)
+
 
 		const pidList = ns.read(pidFile).split("\n").filter(pid => pid.trim() !== "" && !isNaN(parseInt(pid))).map(pid => parseInt(pid)); // Parse process IDs as integers
 		await writeToLogFile(ns, logDelay, logFile, `Pid list obtained: ${pidList}`);
 		for (const pid of pidList) {
-			await ns.kill(pid);
-			ns.print(`Killed process: ${pid}`);
-			await writeToLogFile(ns, logDelay, logFile, `Killed process: ${pid}`);
+			const processExists = await ns.ps(pid);
+			if (processExists) {
+				await ns.kill(pid);
+				ns.print(`Killed process: ${pid}`);
+				await writeToLogFile(ns, logDelay, logFile, `Killed process: ${pid}`);
+			} else {
+				ns.print(`Process with PID ${pid} does not exist.`);
+			}
 		}
 
 		ns.print(`All pids killed. Removing file.`);
