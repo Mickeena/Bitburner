@@ -8,8 +8,8 @@
 /* Usage: run purchasePrivate.js [ram]		 */
 /* ----------------------------------------- */
 
-import { formatValue } from "utility/formatValues.js"
-import { fixPrivServNames } from "utility/fixPrivServNames.js"
+import { formatValue } from `utility/formatValues.js`;
+import { fixPrivServNames } from `utility/fixPrivServNames.js`;
 
 export async function main(ns) {
 	ns.disableLog("ALL");
