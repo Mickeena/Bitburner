@@ -5,10 +5,10 @@
 /*  all servers and exports as a list		 */
 /* ----------------------------------------- */
 
-import { scanAll } from "utility/eye.js";
-import { formatValue, formatValueTime } from "utility/formatValues.js"
+import { scanAll } from `utility/eye.js`;
+import { formatValue, formatValueTime } from `utility/formatValues.js`;
 import { clearLogFile, writeToLogFile } from 'logs/logger.js';
-// import { getCPS, sortCPS, printCPS } from "utility/optimal.js"
+// import { getCPS, sortCPS, printCPS } from `utility/optimal.js`;
 
 export async function main(ns) {
 	const mode = ns.args[0]
