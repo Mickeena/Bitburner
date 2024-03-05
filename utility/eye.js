@@ -5,8 +5,8 @@
 /*  various optional functionality			 */
 /* ----------------------------------------- */
 
-// import { scanAll, nukeAll, mapAll } from `utility/eye.js`;
-import { formatValueSec } from `utility/formatValues.js`;
+//import { scanAll, nukeAll, mapAll } from 'utility/eye.js';
+import { formatValueSec } from 'utility/formatValues.js';
 
 export async function main(ns) {
 	let args = ns.args;
