@@ -7,7 +7,7 @@
 /*  private servers.						 */
 /* ----------------------------------------- */
 
-import { scanAll, nukeAll } from `utility/eye.js`;
+import { scanAll, nukeAll } from 'utility/eye.js';
 
 export async function main(ns) {
 	ns.disableLog("ALL");
