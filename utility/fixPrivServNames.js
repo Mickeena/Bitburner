@@ -5,7 +5,7 @@
 /* intended naming convention (or requested) */
 /* ----------------------------------------- */
 
-// import { fixPrivServNames } from `utility/fixPrivServNames.js`;
+// import { fixPrivServNames } from 'utility/fixPrivServNames.js';
 
 // Main function for running the script directly
 export async function main(ns) {
