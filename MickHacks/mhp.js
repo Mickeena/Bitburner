@@ -8,7 +8,7 @@
 /* ----------------------------------------- */
 
 // Import the scanAll function
-import { scanAll } from `utility/eye.js`;
+import { scanAll } from 'utility/eye.js';
 
 export async function main(ns) {
 	// Get the list of all servers
